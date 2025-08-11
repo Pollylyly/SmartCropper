@@ -51,8 +51,7 @@ publishing {
         android.libraryVariants.all { variant ->
             // 为每个变体创建一个 MavenPublication
             create(variant.name, MavenPublication) {
-                //指定这个变体打包后的 .aar 文件
-                artifact(variant.packageLibraryProvider.get())
+                from components.findByName(variant.name)
             }
         }
     }
