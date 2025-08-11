@@ -45,3 +45,7 @@ else()
 target_link_libraries(${TARGET} opencv_imgproc opencv_core tegra_hal tbb cpufeatures)
 endif()
 
+target_link_options(
+        #对齐16k
+        ${TARGET} PRIVATE "-Wl,-z,max-page-size=16384"
+)
