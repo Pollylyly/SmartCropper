@@ -4,6 +4,7 @@
 # Sets the minimum version of CMake required to build the native library.
 
 cmake_minimum_required(VERSION 3.4.1)
+project(smartcropper-native)
 
 set(TARGET smart_cropper)
 set(SRC_DIR src/main/cpp/)

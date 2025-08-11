@@ -51,25 +51,15 @@ publishing {
         android.libraryVariants.all { variant ->
             // 为每个变体创建一个 MavenPublication
             create(variant.name, MavenPublication) {
-                // groupId, artifactId, 和 version 会由 JitPack 自动提供
-                // JitPack 会根据 variant 的名字自动选择正确的发布
-                // 我们只需要告诉它发布的内容是什么
+                // 从 Gradle project 的属性中获取 GAV
+                groupId = project.group
+                // artifactId 使用根项目的名称
+                artifactId = rootProject.name
+                version = project.version
 
-                // from components.release 的替代方案：
-                // 直接指定这个变体打包后的 .aar 文件
+                //指定这个变体打包后的 .aar 文件
                 artifact(variant.packageLibraryProvider.get())
             }
         }
-//        release(MavenPublication) {
-//            from components.release
-//            groupId = 'com.github.pqpo'
-//            artifactId = 'smartcropperlib'
-//            version = '2.1.4'
-//        }
     }
-//    repositories {
-//        maven {
-//            url "file://${buildDir}/repo"
-//        }
-//    }
 }
