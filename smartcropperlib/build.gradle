@@ -51,12 +51,6 @@ publishing {
         android.libraryVariants.all { variant ->
             // 为每个变体创建一个 MavenPublication
             create(variant.name, MavenPublication) {
-                // 从 Gradle project 的属性中获取 GAV
-                groupId = project.group
-                // artifactId 使用根项目的名称
-                artifactId = rootProject.name
-                version = project.version
-
                 //指定这个变体打包后的 .aar 文件
                 artifact(variant.packageLibraryProvider.get())
             }
