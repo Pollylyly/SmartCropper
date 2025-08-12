@@ -12,7 +12,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 10
-        versionName "2.1.4"
+        versionName project.properties['versionName']
 
         externalNativeBuild {
             cmake {
@@ -45,27 +45,27 @@ dependencies {
     api 'org.tensorflow:tensorflow-lite:2.17.0'
 }
 
-publishing {
-    publications {
-        // 遍历所有的构建变体 (比如 release, debug)
-        android.libraryVariants.all { variant ->
-            // 为每个变体创建一个 MavenPublication
-            create(variant.name, MavenPublication) {
-                artifactId = "SmartCropper"
-                //指定发布的制品是该变体打包后的 .aar 文件
-                artifact(variant.packageLibraryProvider.get())
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                // 指定 GAV，由 gradle.properties 控制
+                groupId = "com.github.Pollylyly"
+                artifactId = "SmartCropper" // 必须与 GitHub 仓库名完全一致
+                version = project.properties['versionName']
 
-                //指定 pom 文件的内容应该包含依赖信息
+                artifact tasks.named("bundleReleaseAar")
+
+                //将依赖信息写入 pom.xml
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
-                    // 遍历这个变体在编译时所需的所有'api'和'implementation'依赖
-                    project.configurations.getByName(variant.name + "CompileClasspath").allDependencies.each {
-                        // 只添加那些有 group, name, version 的外部依赖
-                        if (it.group != null && it.name != null && it.version != null) {
+                    // 遍历 release 版本编译时所需的所有依赖
+                    project.configurations.releaseCompileClasspath.allDependencies.each { dep ->
+                        if (dep.group != null && dep.name != null && dep.version != null) {
                             def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', it.group)
-                            dependencyNode.appendNode('artifactId', it.name)
-                            dependencyNode.appendNode('version', it.version)
+                            dependencyNode.appendNode('groupId', dep.group)
+                            dependencyNode.appendNode('artifactId', dep.name)
+                            dependencyNode.appendNode('version', dep.version)
                         }
                     }
                 }
