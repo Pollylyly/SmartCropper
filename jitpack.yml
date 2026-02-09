@@ -1,0 +1,7 @@
+jdk:
+  - openjdk21
+
+# 告诉 JitPack 只运行库模块的打包任务，跳过示例 app 的编译
+# 这能极大地减少构建时间，避免超时
+install:
+  - ./gradlew :smartcropperlib:bundleReleaseAar publishToMavenLocal -Dmaven.repo.local=$HOME/.m2/repository

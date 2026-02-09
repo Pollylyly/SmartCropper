@@ -6,11 +6,11 @@ plugins {
 android {
     namespace="me.pqpo.smartcropperlib"
     ndkVersion '25.1.8937393'
-    compileSdkVersion 29
+    compileSdkVersion 35
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 29
+        minSdkVersion 23
+        targetSdkVersion 35
         versionCode 10
         versionName project.properties['versionName']
 
@@ -23,6 +23,12 @@ android {
         }
 
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -36,6 +42,12 @@ android {
     }
     lintOptions {
         abortOnError false
+    }
+    publishing {
+        singleVariant("release") {
+            // 把源码也打包进去
+            // withSourcesJar()
+        }
     }
 }
 
@@ -54,21 +66,22 @@ afterEvaluate {
                 artifactId = "SmartCropper" // 必须与 GitHub 仓库名完全一致
                 version = project.properties['versionName']
 
-                artifact tasks.named("bundleReleaseAar")
+                from components.release
 
-                //将依赖信息写入 pom.xml
-                pom.withXml {
-                    def dependenciesNode = asNode().appendNode('dependencies')
-                    // 遍历 release 版本编译时所需的所有依赖
-                    project.configurations.releaseCompileClasspath.allDependencies.each { dep ->
-                        if (dep.group != null && dep.name != null && dep.version != null) {
-                            def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', dep.group)
-                            dependencyNode.appendNode('artifactId', dep.name)
-                            dependencyNode.appendNode('version', dep.version)
-                        }
-                    }
-                }
+//                artifact tasks.named("bundleReleaseAar")
+//                //将依赖信息写入 pom.xml
+//                pom.withXml {
+//                    def dependenciesNode = asNode().appendNode('dependencies')
+//                    // 遍历 release 版本编译时所需的所有依赖
+//                    project.configurations.releaseCompileClasspath.allDependencies.each { dep ->
+//                        if (dep.group != null && dep.name != null && dep.version != null) {
+//                            def dependencyNode = dependenciesNode.appendNode('dependency')
+//                            dependencyNode.appendNode('groupId', dep.group)
+//                            dependencyNode.appendNode('artifactId', dep.name)
+//                            dependencyNode.appendNode('version', dep.version)
+//                        }
+//                    }
+//                }
             }
         }
     }
